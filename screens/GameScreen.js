@@ -1,12 +1,16 @@
+import { useEffect, useState } from "react";
 import { StyleSheet, View, Text, Alert } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+
 import Title from "../components/ui/Title";
 import NumberContainer from "../components/game/NumberContainer";
-import { useEffect, useState } from "react";
 import PrimaryButton from "./../components/ui/PrimaryButton";
+import Card from "./../components/ui/Card";
+import Colors from "../constants/colors";
 
-function generateRandomBetween(min, max, exclude) {
+function generateRandomBetween(min, max, exclude = null) {
   const rndNum = Math.floor(Math.random() * (max - min)) + min;
-  if (rndNum === exclude) {
+  if (exclude && rndNum === exclude) {
     return generateRandomBetween(min, max, exclude);
   } else {
     return rndNum;
@@ -18,7 +22,7 @@ const range = {
   max: 100,
 };
 
-const GameScreen = ({ userNumber, changeScreen }) => {
+const GameScreen = ({ userNumber, changeScreen, increaseGuessCount}) => {
   const [currentGuess, setCurrentGuess] = useState(
     generateRandomBetween(range.min, range.max, userNumber)
   );
@@ -37,11 +41,8 @@ const GameScreen = ({ userNumber, changeScreen }) => {
     } else {
       range.min = currentGuess + 1;
     }
-    const newRandomNumber = generateRandomBetween(
-      range.min,
-      range.max,
-      currentGuess
-    );
+    const newRandomNumber = generateRandomBetween(range.min, range.max);
+    increaseGuessCount();
     setCurrentGuess(newRandomNumber);
   };
 
@@ -53,17 +54,21 @@ const GameScreen = ({ userNumber, changeScreen }) => {
     <View style={styles.screen}>
       <Title>Opponent's Guess</Title>
       <NumberContainer>{currentGuess}</NumberContainer>
-      <View>
-        <Text>Higher or Lower</Text>
-        <View>
-          <PrimaryButton onPress={() => changeNumberHandler("higher")}>
-            +
-          </PrimaryButton>
-          <PrimaryButton onPress={() => changeNumberHandler("lower")}>
-            -
-          </PrimaryButton>
+      <Card>
+        <Text style={styles.instructionTxt}>Higher or Lower</Text>
+        <View style={styles.btnsContainer}>
+          <View style={styles.btnContainer}>
+            <PrimaryButton onPress={() => changeNumberHandler("higher")}>
+            <Ionicons name="add" size={24} />
+            </PrimaryButton>
+          </View>
+          <View style={styles.btnContainer}>
+            <PrimaryButton onPress={() => changeNumberHandler("lower")}>
+              <Ionicons name="remove" size={24} />
+            </PrimaryButton>
+          </View>
         </View>
-      </View>
+      </Card>
     </View>
   );
 };
@@ -74,5 +79,18 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
     padding: 24,
+  },
+  instructionTxt: {
+    fontFamily: "OpenSansRegular",
+    color: Colors.accent500,
+    fontSize: 24,
+    textAlign: "center",
+  },
+  btnsContainer: {
+    flexDirection: "row",
+    marginTop: 16,
+  },
+  btnContainer: {
+    flex: 1,
   },
 });

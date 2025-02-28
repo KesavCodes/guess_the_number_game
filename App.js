@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   ImageBackground,
   SafeAreaView,
@@ -6,19 +6,44 @@ import {
   StyleSheet,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
+import { useFonts } from "expo-font";
+import * as SplashScreen from "expo-splash-screen";
 
 import StartGameScreen from "./screens/StartGameScreen";
 import GameScreen from "./screens/GameScreen";
-import Colors from "./constants/colors";
 import GameOverScreen from "./screens/GameOverScreen";
+import Colors from "./constants/colors";
+
+SplashScreen.preventAutoHideAsync();
 
 export default function App() {
+  const [fontsLoaded, error] = useFonts({
+    OpenSansRegular: require("./assets/fonts/OpenSans-Regular.ttf"),
+    OpenSansBold: require("./assets/fonts/OpenSans-Bold.ttf"),
+  });
+
+  useEffect(() => {
+    if (fontsLoaded || error) SplashScreen.hideAsync();
+  }, [fontsLoaded, error]);
+
   const [userNumber, setUserNumber] = useState(null);
+  const [noOfGuesses, setNoOfGuesses] = useState(0);
   const [currentScreen, setCurrentScreen] = useState("home");
+
+  const increaseNoOfGuess = () =>
+    setNoOfGuesses((prevGuesses) => prevGuesses + 1);
 
   const pickedNumberHandler = (pickedNumber) => setUserNumber(pickedNumber);
 
   const changeScreenHandler = (newScreen) => setCurrentScreen(newScreen);
+
+  const restartGameHandler = () => {
+    setUserNumber(null);
+    setNoOfGuesses(0);
+    setCurrentScreen("home");
+  };
+
+  if (!fontsLoaded && !error) return null;
 
   let screen = (
     <StartGameScreen
@@ -26,12 +51,19 @@ export default function App() {
       changeScreen={changeScreenHandler}
     />
   );
-  
+
   if (currentScreen === "game")
     screen = (
-      <GameScreen userNumber={userNumber} changeScreen={changeScreenHandler} />
+      <GameScreen
+        userNumber={userNumber}
+        changeScreen={changeScreenHandler}
+        increaseGuessCount={increaseNoOfGuess}
+      />
     );
-  else if (currentScreen === "over") screen = <GameOverScreen />;
+  else if (currentScreen === "over")
+    screen = (
+      <GameOverScreen roundsNumber={noOfGuesses} userNumber={userNumber} onStarNewGame={restartGameHandler} />
+    );
 
   return (
     <LinearGradient
