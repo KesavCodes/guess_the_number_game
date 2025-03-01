@@ -2,7 +2,6 @@ import {
   TextInput,
   View,
   StyleSheet,
-  Settings,
   Alert,
   Text,
 } from "react-native";
@@ -11,7 +10,6 @@ import { useState } from "react";
 import Colors from "../constants/colors";
 import Title from "./../components/ui/Title";
 import Card from "../components/ui/Card";
-import { getLoadedFonts } from "expo-font";
 
 const StartGameScreen = ({ onConfirmNumber, changeScreen }) => {
   const [enteredNumber, setEnteredNumber] = useState("");

@@ -62,7 +62,11 @@ export default function App() {
     );
   else if (currentScreen === "over")
     screen = (
-      <GameOverScreen roundsNumber={noOfGuesses} userNumber={userNumber} onStarNewGame={restartGameHandler} />
+      <GameOverScreen
+        roundsNumber={noOfGuesses}
+        userNumber={userNumber}
+        onStarNewGame={restartGameHandler}
+      />
     );
 
   return (
