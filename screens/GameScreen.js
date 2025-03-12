@@ -1,5 +1,12 @@
 import { useEffect, useState } from "react";
-import { StyleSheet, View, Text, Alert, FlatList } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Text,
+  Alert,
+  FlatList,
+  useWindowDimensions,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 import Title from "../components/ui/Title";
@@ -26,6 +33,7 @@ const range = {
 const GameScreen = ({ userNumber, changeScreen, increaseGuessCount }) => {
   const [currentGuess, setCurrentGuess] = useState(null);
   const [guessRounds, setGuessRounds] = useState([]);
+  const { height } = useWindowDimensions();
   const changeNumberHandler = (direction) => {
     // 'higher' or 'lower'
     if (
@@ -69,9 +77,8 @@ const GameScreen = ({ userNumber, changeScreen, increaseGuessCount }) => {
     increaseGuessCount();
   }, []);
 
-  return (
-    <View style={styles.screen}>
-      <Title>Opponent's Guess</Title>
+  let content = (
+    <>
       <NumberContainer>{currentGuess}</NumberContainer>
       <Card>
         <Text style={styles.instructionTxt}>Higher or Lower</Text>
@@ -88,6 +95,48 @@ const GameScreen = ({ userNumber, changeScreen, increaseGuessCount }) => {
           </View>
         </View>
       </Card>
+    </>
+  );
+
+  if (height < 400) {
+    content = (
+      <>
+        <Card>
+          <View
+            style={[
+              styles.btnsContainer,
+              { alignItems: "center", marginTop: 0 },
+            ]}
+          >
+            <View style={styles.btnContainer}>
+              <PrimaryButton onPress={() => changeNumberHandler("higher")}>
+                <Ionicons name="add" size={24} />
+              </PrimaryButton>
+            </View>
+            <NumberContainer>{currentGuess}</NumberContainer>
+            <View style={styles.btnContainer}>
+              <PrimaryButton onPress={() => changeNumberHandler("lower")}>
+                <Ionicons name="remove" size={24} />
+              </PrimaryButton>
+            </View>
+          </View>
+        </Card>
+      </>
+    );
+  }
+  return (
+    <View
+      style={[
+        styles.screen,
+        height < 400
+          ? { paddingTop: 0, paddingBottom: 16, flexDirection: "row", alignItems: "center", justifyContent: "center" }
+          : {},
+      ]}
+    >
+      <View style={{flex: 1}}>
+        <Title>Opponent's Guess</Title>
+        {content}
+      </View>
       <View style={styles.listContainer}>
         <FlatList
           data={guessRounds}

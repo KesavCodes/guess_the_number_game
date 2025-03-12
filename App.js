@@ -14,6 +14,8 @@ import GameScreen from "./screens/GameScreen";
 import GameOverScreen from "./screens/GameOverScreen";
 import Colors from "./constants/colors";
 
+import { StatusBar as StatusBarTop } from "expo-status-bar";
+
 SplashScreen.preventAutoHideAsync();
 
 export default function App() {
@@ -70,21 +72,24 @@ export default function App() {
     );
 
   return (
-    <LinearGradient
-      colors={[Colors.primary700, Colors.accent500]}
-      style={styles.rootContainer}
-    >
-      <ImageBackground
+    <>
+      <StatusBarTop style="light" />
+      <LinearGradient
+        colors={[Colors.primary700, Colors.accent500]}
         style={styles.rootContainer}
-        source={require("./assets/images/background.png")}
-        resizeMode="cover"
-        imageStyle={styles.imgBackground}
       >
-        {/* SafeAreView only works on ios */}
-        {/* Adding styles for android devices */}
-        <SafeAreaView style={styles.rootContainer}>{screen}</SafeAreaView>
-      </ImageBackground>
-    </LinearGradient>
+        <ImageBackground
+          style={styles.rootContainer}
+          source={require("./assets/images/background.png")}
+          resizeMode="cover"
+          imageStyle={styles.imgBackground}
+        >
+          {/* SafeAreView only works on ios */}
+          {/* Adding styles for android devices */}
+          <SafeAreaView style={styles.rootContainer}>{screen}</SafeAreaView>
+        </ImageBackground>
+      </LinearGradient>
+    </>
   );
 }
 
